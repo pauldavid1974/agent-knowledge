@@ -1,0 +1,52 @@
+#!/bin/sh
+# Backstop against private details reaching this PUBLIC repo.
+#
+# This is NOT the primary control. The primary control is the rule in README.md:
+# environment-specific pages go to agent-knowledge-local on Paul's Forgejo.
+# A regex can only ever catch the things someone thought to list. It cannot catch
+# "facts about a private environment", which is an unbounded class.
+#
+# It lives in a committed hook rather than being run by an agent, because an agent
+# acting on injected instructions would simply decide not to run it.
+#
+# Enable after cloning:   git config core.hooksPath .githooks
+# Bypass (deliberately):  git commit --no-verify
+
+staged=$(git diff --cached --name-only --diff-filter=ACM)
+[ -z "$staged" ] && exit 0
+
+hits=0
+report() { echo "BLOCKED  $1"; echo "         $2"; hits=$((hits+1)); }
+
+for f in $staged; do
+  [ -f "$f" ] || continue
+  case "$f" in .githooks/pre-commit) continue ;; esac   # this file names the patterns
+
+  m=$(grep -nEi '[a-z0-9-]*\.?tail[0-9a-f]{4,}\.ts\.net|\.ts\.net\b' "$f" | head -3) && [ -n "$m" ] && \
+    report "$f — Tailscale hostname" "$m"
+
+  m=$(grep -nE '\b(192\.168\.[0-9]{1,3}\.[0-9]{1,3}|10\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}|172\.(1[6-9]|2[0-9]|3[01])\.[0-9]{1,3}\.[0-9]{1,3})\b' "$f" | head -3) && [ -n "$m" ] && \
+    report "$f — private LAN address" "$m"
+
+  m=$(grep -nE '(gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|sk-[A-Za-z0-9]{20,}|xox[baprs]-[A-Za-z0-9-]{10,}|AKIA[0-9A-Z]{16})' "$f" | head -3) && [ -n "$m" ] && \
+    report "$f — looks like a credential" "$m"
+
+  m=$(grep -nEi '\b(minisforum|gitserver|ubuntu-server)\b' "$f" | head -3) && [ -n "$m" ] && \
+    report "$f — private hostname" "$m"
+
+  m=$(grep -nEi -- '-----BEGIN [A-Z ]*PRIVATE KEY-----' "$f" | head -3) && [ -n "$m" ] && \
+    report "$f — private key" "$m"
+done
+
+if [ "$hits" -gt 0 ]; then
+  cat <<'EOF'
+
+This repository is PUBLIC. The content above belongs in the private library instead:
+  agent-knowledge-local  (on Paul's Forgejo)
+
+If this is a false positive and the content is genuinely safe to publish, commit with
+  git commit --no-verify
+EOF
+  exit 1
+fi
+exit 0

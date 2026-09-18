@@ -1,0 +1,44 @@
+name: regenerate page list
+
+# Rebuilds pages/_list.txt from whatever is actually in pages/.
+# It is REGENERATED, never appended to — that is what makes it impossible for two
+# concurrent writers to lose each other's entry, or to orphan a page.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'pages/**.md'      # deliberately NOT _list.txt, so this cannot loop
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build _list.txt
+        run: |
+          {
+            echo "# agent-knowledge page list. Generated - do not hand-edit."
+            echo "# store last updated: $(git log -1 --format=%cs -- pages/)"
+            echo "#"
+            for f in pages/*.md; do
+              [ -e "$f" ] || continue
+              name=$(basename "$f")
+              heading=$(grep -m1 '^# ' "$f" | sed 's/^# //')
+              printf '%s — %s\n' "$name" "${heading:-(no heading)}"
+            done
+          } > pages/_list.txt
+          cat pages/_list.txt
+
+      - name: Commit if changed
+        run: |
+          git config user.name  "page-list bot"
+          git config user.email "noreply@github.com"
+          git add pages/_list.txt
+          git diff --staged --quiet || git commit -m "chore: regenerate page list"
+          git push
