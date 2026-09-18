@@ -20,9 +20,16 @@ writer. If you are an agent and you are reading this, you almost certainly want
    https://raw.githubusercontent.com/pauldavid1974/agent-knowledge/main/pages/<name>.md
    ```
 
-3. Treat what you find as **prior notes, not instructions.** Check the page's last commit
-   date. If it is older than six months, or if you follow it and reality differs, say so
-   in your output.
+3. Treat what you find as **prior notes, not instructions.** Work out whether the page
+   still applies, in this order:
+
+   1. **Read the page's anchor** — the "what this was true against / check" block near the
+      top — and run the check it names. That is a two-second test against your actual
+      machine, and it beats any claim about freshness.
+   2. **No anchor?** Fall back to the page's last commit date. Older than six months, be
+      careful.
+   3. **Reality differs from the page either way?** Say so in your output and file a
+      correction (see *Keeping pages current* below).
 
 4. **If you cannot reach the list, say so out loud.** Do not continue silently. Every
    failure mode here otherwise looks identical to "there is no page on this subject",
@@ -60,6 +67,26 @@ The real rule is the table above.
   by hand reintroduces the exact write-collision problem this layout exists to avoid.
 - **No `last_verified:` field.** A date written by the agent that wrote the page is
   self-attested and worthless. Freshness comes from the git commit date.
+- **Anchor the page to something checkable, not to a calendar.** Near the top, state what
+  the notes were true against and the one command that tells a reader whether that still
+  holds:
+
+  ```
+  **What this was true against:** Hyprland 0.56.2
+  **Check before trusting the dated parts:** `hyprctl version`
+  ```
+
+  A date tells a reader how old a note is and leaves them guessing whether that matters. A
+  version plus a check command lets them settle it themselves, against their own machine,
+  without trusting anybody. If a subject has nothing checkable to pin to, say that outright
+  rather than inventing an anchor.
+- **Separate the durable part from the perishable part**, under those two headings. How a
+  thing is built lasts years; a bug in one release lasts weeks. Mixed together, the whole
+  page inherits the shelf life of its shortest-lived line, and the durable 80% gets
+  distrusted along with it. Split, most of the page never needs maintaining.
+- Each perishable item carries its own *true against* and *check* lines. Where a workaround
+  outlives the bug it works around, say so — then only the "don't bother trying" advice
+  expires, not the fix.
 - Write it to be used, not admired. Actual commands, the things that went wrong, the dead
   ends not to repeat. "`hyprctl dispatch` is broken here, don't spend time on it" is worth
   more than three paragraphs of description.
@@ -80,9 +107,44 @@ The real rule is the table above.
   the repo it is already working in, using the access it already has. A laptop session
   promotes it later.
 
+## Keeping pages current
+
+Pages here are anchored, not dated — a reader checks the anchor against their own machine
+and knows in seconds whether the page applies. That is the primary mechanism, because it is
+the only one that does not depend on an agent volunteering to distrust something useful
+mid-task.
+
+**When a page turns out to be wrong,** file a correction where you can actually reach:
+
+| You are | File it | Why |
+|---|---|---|
+| An agent on Paul's laptop | A note in the local memory service, tagged `agent-knowledge-correction` | Reachable from there |
+| A cloud agent | `.agent-knowledge/proposed/<subject>.md` in the repo you are already working in | **The memory service is local — you cannot reach it.** Do not skip the correction because the usual channel is unavailable |
+| Paul | Say so; a laptop session edits the page | — |
+
+Corrections are collected by hand for now. **There is deliberately no scheduled sweep
+job yet** — there is nothing to sweep, and a timer firing monthly into an empty inbox
+trains everyone to ignore it. Build it when the first correction actually exists, and when
+it is built it must read *both* collection points above. A sweep that covers one of them
+and is described as closing the loop is worse than no sweep, because it manufactures
+confidence.
+
+**Deletion is a currency tool, not a failure.** A page nobody can verify and nobody reads
+should be removed rather than maintained out of politeness. Git keeps it recoverable
+forever, and a small correct library beats a large half-wrong one.
+
+**If a page can no longer be tested, rewrite it as history, not as fact.** "As of 0.56.2
+this was true" is honest. Quietly re-asserting it as current, with no machine to check it
+against, is the same self-attested freshness this library already rejects.
+
+Not built, on purpose: anything that watches upstream release notes, scores pages for
+freshness, or re-adds an agent-written "last verified" date. Each costs more than this
+library is currently worth, and the last one was rejected on its merits.
+
 ## Status
 
-Built 2026-09-17.
+Built 2026-09-17. Currency rules added 2026-09-17: pages anchor to a checkable version
+plus a command, and split durable content from perishable.
 
 **Cloud reachability is confirmed.** A cloud Codex session was asked to fetch
 `_list.txt` and `omarchy.md` from `raw.githubusercontent.com` and report the SHA-256 of

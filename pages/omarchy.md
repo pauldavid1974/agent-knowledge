@@ -4,10 +4,21 @@ Omarchy is an opinionated Arch + Hyprland desktop distribution. These are notes 
 actually driving it, not from its documentation. Where the documentation and this page
 disagree, this page is describing what happened.
 
-Verified against Hyprland **0.56.2**. Check `hyprctl version` before trusting the
-version-specific parts.
+**What this was true against:** Hyprland 0.56.2, installed from an ISO downloaded
+2026-09.
+**Check before trusting the dated parts:** `hyprctl version`.
 
-## Why it suits an AI-heavy workflow
+If that reports something newer, everything under *Perishable* below is a claim about
+the past, not about your machine. The *Durable* section does not depend on the version.
+
+---
+
+## Durable — how Omarchy is built
+
+This part describes the shape of the system. It goes stale only if the distribution is
+redesigned.
+
+### Why it suits an AI-heavy workflow
 
 It ships lazy launchers for `claude`, `codex`, `opencode`, `gemini`, `copilot` and `grok`
 in `~/.local/bin`, with a single keybind and a token-usage panel. If you use several coding
@@ -16,19 +27,6 @@ wire up yourself.
 
 It also has voice typing built in, and hardware profiles — `omarchy-hw-asus-rog` is one of
 them, so ROG laptops get sane defaults without hunting for kernel parameters.
-
-## Gotchas that cost real time
-
-### `hyprctl dispatch` is broken in 0.56.2
-
-It parses its arguments as Lua and rejects the documented syntax. Every example you find
-online will fail. **Do not spend time on it.**
-
-Launch applications this way instead:
-
-```bash
-setsid <app> &
-```
 
 ### Graphical commands need the Wayland environment exported first
 
@@ -40,7 +38,8 @@ export XDG_RUNTIME_DIR=/run/user/$(id -u)
 export WAYLAND_DISPLAY=wayland-1
 ```
 
-This is the single most common cause of "the command does nothing and says nothing".
+This is the single most common cause of "the command does nothing and says nothing". It
+is how Wayland works, not a bug — it will not be fixed and will not change.
 
 ### Screenshots and synthetic keystrokes
 
@@ -62,15 +61,13 @@ omarchy-toggle-screensaver
 Worth knowing it exists — the setting is not where you would look for it in a normal
 desktop environment.
 
-## Installer facts
+### Installing: identify the target disk by device type, not by size
 
-- **The ISO is about 5.8 GB.** Several write-ups claim roughly 2 GB. They are out of date,
-  and the difference matters when you are choosing a USB stick.
-- It installs to a normal `sd*` or `nvme*` block device. **Identify the target by device
-  type, not by size** — a 466 GB target and a 477 GB system disk are indistinguishable at a
-  glance, and getting it wrong destroys the wrong drive.
+It installs to a normal `sd*` or `nvme*` block device. **Identify the target by device
+type, not by size** — a 466 GB target and a 477 GB system disk are indistinguishable at a
+glance, and getting it wrong destroys the wrong drive.
 
-## Running it in a VM before committing
+### Running it in a VM before committing
 
 It runs well under QEMU with virgl GPU acceleration on integrated graphics. 4 GB of memory
 and 6 cores boots in roughly 30 seconds.
@@ -79,7 +76,7 @@ and 6 cores boots in roughly 30 seconds.
 preference. It causes persistent screen flashing. Integrated graphics with virgl is both
 faster to set up and stable.
 
-## Service management — the reason this OS is worth the move for agent work
+### Service management — the reason this OS is worth the move for agent work
 
 Local AI services that load a model at startup are expensive to leave running and annoying
 to start by hand. Linux solves this natively with **socket activation**: systemd holds the
@@ -92,3 +89,36 @@ when you need it.
 
 If you are weighing this distribution for a machine that runs local model services, that
 is the concrete argument.
+
+---
+
+## Perishable — check these before relying on them
+
+Each item says what it was true against and how to check. A bug is a statement about one
+release; it gets fixed, and then this section is wrong.
+
+### `hyprctl dispatch` is broken
+
+- **True against:** Hyprland 0.56.2
+- **Check:** `hyprctl version`, then try the documented syntax once
+
+It parses its arguments as Lua and rejects the documented syntax. Every example you find
+online will fail. **Do not spend time on it.**
+
+Launch applications this way instead:
+
+```bash
+setsid <app> &
+```
+
+`setsid` works regardless, so the workaround stays correct even after the bug is fixed —
+it is only the "do not bother trying" advice that expires.
+
+### The ISO is about 5.8 GB
+
+- **True against:** the ISO downloaded 2026-09
+- **Check:** the size listed on the download page
+
+Several write-ups claim roughly 2 GB. They were out of date, and the difference matters
+when you are choosing a USB stick. Image sizes move with every release — read the number
+rather than trusting this line.
