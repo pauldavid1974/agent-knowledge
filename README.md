@@ -67,6 +67,12 @@ The real rule is the table above.
 ## Writing rules (the librarian)
 
 - **Writes come from Paul's laptop only.** No cloud agent holds a credential for this repo.
+  Settled 2026-09-17 and not open for casual revisiting: this was reconsidered once, after a
+  cloud Codex session turned out to be able to write to repos through its own GitHub
+  connection, and the answer was still no. The deciding reason is not credential management —
+  it is that an agent which browses the open web *and* can write here turns one poisoned web
+  page into a permanent one, read as prior notes by every agent on every machine until
+  somebody notices. Nobody here is positioned to notice.
 - **The session that browses the web is not the session that commits.** Research produces a
   draft; a separate short run files it. This is the only thing standing between a poisoned
   web page and a permanently poisoned library.
