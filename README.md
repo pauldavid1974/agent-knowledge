@@ -76,8 +76,24 @@ The real rule is the table above.
 
 ## Status
 
-Built 2026-09-17. Confirmed working with **Claude Code**. Pointer installed for
-**OpenCode** and **Codex** (Codex's behaviour not yet verified — it was out of usage
-quota when the check was run). **Antigravity is not integrated**: it is a desktop app with
-no plain settings file, so it has nowhere obvious to put the pointer. Do not assume
-universal participation.
+Built 2026-09-17.
+
+**Cloud reachability is confirmed.** A cloud Codex session was asked to fetch
+`_list.txt` and `omarchy.md` from `raw.githubusercontent.com` and report the SHA-256 of
+each body. Both matched exactly, and it answered three content questions whose answers
+appear only in the page. It genuinely fetched — the raw host is reachable from a cloud
+agent, unauthenticated. This was the largest open risk in the design and it is closed.
+
+**What is still unverified: unprompted compliance.** That test told the agent to fetch.
+Whether an agent goes and reads the list *on its own*, prompted only by the pointer in its
+config, has not been tested for any product except Claude Code. A cheat-proof test for
+this exists and is ready to run.
+
+| Agent | Reads when told | Reads unprompted | Pointer installed |
+|---|---|---|---|
+| Claude Code | yes | yes | yes |
+| Codex (cloud) | **yes, verified** | not tested | yes |
+| OpenCode | not tested | not tested | yes |
+| Antigravity | not tested | — | **no** — desktop app, no plain settings file |
+
+Do not assume universal participation.
