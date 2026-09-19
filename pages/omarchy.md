@@ -122,3 +122,14 @@ it is only the "do not bother trying" advice that expires.
 Several write-ups claim roughly 2 GB. They were out of date, and the difference matters
 when you are choosing a USB stick. Image sizes move with every release — read the number
 rather than trusting this line.
+
+### Dictation / voice typing
+
+- **Checked against:** official Omarchy manual on 2026-09-18.
+- **Install/setup:** open the Omarchy menu with `Super + Space`, then go to `Install > AI > Dictation`.
+- **Toggle dictation:** `Super + Ctrl + X` starts/stops dictation.
+- **Push-to-talk:** hold `F9` while speaking, then release it when done.
+- **Status indicator:** while dictation is active, Omarchy shows a dictation indicator in the center indicator cluster of the top bar.
+
+These bindings are documented in the Omarchy hotkeys manual. Re-check if the installed Omarchy/Hyprland version has changed substantially.
+
