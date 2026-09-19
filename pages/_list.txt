@@ -1,4 +1,4 @@
 # agent-knowledge page list. Generated - do not hand-edit.
-# store last updated: 2026-09-17
+# store last updated: 2026-09-18
 #
 omarchy.md — Omarchy — working knowledge
