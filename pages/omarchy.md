@@ -133,3 +133,11 @@ rather than trusting this line.
 
 These bindings are documented in the Omarchy hotkeys manual. Re-check if the installed Omarchy/Hyprland version has changed substantially.
 
+### ChatGPT desktop app
+
+- **Verified on:** 2026-09-18 on the current Omarchy/Arch install.
+- OpenAI's official Arch install path worked successfully and installed the `chatgpt-bin` package plus the needed graphics dependency.
+- After installation, `chatgpt` launched the desktop app successfully from a terminal.
+- The installed app opened normally on Omarchy and exposed the desktop ChatGPT/Codex interface.
+- Treat this as version-sensitive packaging knowledge: re-check OpenAI's Linux install instructions if the package/install mechanism changes.
+
