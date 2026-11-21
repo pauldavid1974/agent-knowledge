@@ -19,12 +19,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Build _list.txt
         run: |
           {
             echo "# agent-knowledge page list. Generated - do not hand-edit."
-            echo "# store last updated: $(git log -1 --format=%cs -- pages/)"
+            echo "# store last updated: $(git log -1 --format=%cs -- ':(glob)pages/*.md')"
             echo "#"
             for f in pages/*.md; do
               [ -e "$f" ] || continue

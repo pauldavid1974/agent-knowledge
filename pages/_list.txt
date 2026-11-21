@@ -1,4 +1,5 @@
 # agent-knowledge page list. Generated - do not hand-edit.
-# store last updated: 2026-09-18
+# store last updated: 2026-10-17
 #
+autodesk-fusion-mcp.md — autodesk-fusion-mcp
 omarchy.md — Omarchy — working knowledge
